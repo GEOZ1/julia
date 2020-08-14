@@ -44,7 +44,9 @@ void jl_write_compiler_output(void)
     for (i = 0; i < l; i++) {
         jl_value_t *m = jl_ptrarrayref(worklist, i);
         jl_value_t *f = jl_get_global((jl_module_t*)m, jl_symbol("__init__"));
-        if (f) {
+        int setting = jl_get_module_compile((jl_module_t*)m);
+        if (f && setting != JL_OPTIONS_COMPILE_OFF &&
+            setting != JL_OPTIONS_COMPILE_MIN) {
             jl_array_ptr_1d_push(jl_module_init_order, m);
             // TODO: this would be better handled if moved entirely to jl_precompile
             // since it's a slightly duplication of effort
